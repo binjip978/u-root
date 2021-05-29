@@ -76,6 +76,13 @@ f2
 d1
 f2
 `,
+	}, {
+		flags: []string{"-S"},
+		out: `f2
+d1
+f1
+f3?line 2
+`,
 	},
 }
 
@@ -92,11 +99,13 @@ func TestLs(t *testing.T) {
 
 	// Create some files.
 	os.Create(filepath.Join(testDir, "f1"))
-	os.Create(filepath.Join(testDir, "f2"))
+	f2, _ := os.Create(filepath.Join(testDir, "f2"))
 	os.Create(filepath.Join(testDir, "f3\nline 2"))
 	os.Create(filepath.Join(testDir, ".f4"))
 	os.Mkdir(filepath.Join(testDir, "d1"), 0740)
 	os.Create(filepath.Join(testDir, "d1/f4"))
+
+	f2.Write(make([]byte, 512))
 
 	// Table-driven testing
 	for _, tt := range tests {
