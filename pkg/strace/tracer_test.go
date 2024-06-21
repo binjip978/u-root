@@ -114,3 +114,23 @@ func TestMultiProcess(t *testing.T) {
 
 	runAndCollectTrace(t, cmd)
 }
+
+func TestSleep(t *testing.T) {
+	prepareTestCmd(t, "./test/sleep")
+
+	var b bytes.Buffer
+	cmd := exec.Command("./test/sleep")
+	cmd.Stdout = &b
+
+	runAndCollectTrace(t, cmd)
+}
+
+func TestPing(t *testing.T) {
+	prepareTestCmd(t, "./test/ping")
+
+	var b bytes.Buffer
+	cmd := exec.Command("./test/ping", "localhost")
+	cmd.Stdout = &b
+
+	runAndCollectTrace(t, cmd)
+}
