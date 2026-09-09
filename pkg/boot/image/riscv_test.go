@@ -56,14 +56,14 @@ func TestParseRISCVRejectsArm64(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err := ParseRISCVFromBytes(arm64); !errors.Is(err, errBadMagic) {
-		t.Errorf("ParseRISCVFromBytes(arm64 Image) = %v, want %v", err, errBadMagic)
+	if _, err := ParseRISCVFromBytes(arm64); !errors.Is(err, ErrBadMagic) {
+		t.Errorf("ParseRISCVFromBytes(arm64 Image) = %v, want %v", err, ErrBadMagic)
 	}
 }
 
 func TestParseArm64RejectsRISCV(t *testing.T) {
-	if _, err := ParseFromBytes(riscvHeader(t)); !errors.Is(err, errBadMagic) {
-		t.Errorf("ParseFromBytes(riscv64 Image) = %v, want %v", err, errBadMagic)
+	if _, err := ParseFromBytes(riscvHeader(t)); !errors.Is(err, ErrBadMagic) {
+		t.Errorf("ParseFromBytes(riscv64 Image) = %v, want %v", err, ErrBadMagic)
 	}
 }
 
@@ -76,7 +76,7 @@ func TestParseRISCVErrors(t *testing.T) {
 		{
 			name: "bad magic2",
 			mod:  func(b []byte) { binary.LittleEndian.PutUint32(b[0x38:], 0xdeadbeef) },
-			want: errBadMagic,
+			want: ErrBadMagic,
 		},
 		{
 			// magic is deprecated as of header v0.2, so a wrong one
@@ -88,12 +88,12 @@ func TestParseRISCVErrors(t *testing.T) {
 		{
 			name: "zero image size",
 			mod:  func(b []byte) { binary.LittleEndian.PutUint64(b[0x10:], 0) },
-			want: errNoImageSize,
+			want: ErrNoImageSize,
 		},
 		{
 			name: "big endian kernel",
 			mod:  func(b []byte) { binary.LittleEndian.PutUint64(b[0x18:], 1) },
-			want: errBadEndianness,
+			want: ErrBadEndianness,
 		},
 		{
 			name: "truncated",

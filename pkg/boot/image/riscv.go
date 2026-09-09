@@ -20,7 +20,10 @@ const (
 	RISCVMagic2 = 0x05435352
 )
 
-var errNoImageSize = errors.New("image size is zero")
+// ErrNoImageSize is returned when a RISC-V Image header carries no image
+// size. Unlike arm64 there is no fallback to guess at: the RISC-V
+// documentation makes the field mandatory.
+var ErrNoImageSize = errors.New("image size is zero")
 
 // RISCVHeader is the header of a RISC-V Image.
 //
@@ -66,7 +69,7 @@ func ParseRISCVFromBytes(data []byte) (*RISCVImage, error) {
 	}
 
 	if img.Header.Magic2 != RISCVMagic2 {
-		return img, errBadMagic
+		return img, ErrBadMagic
 	}
 
 	// "Image size is mandatory for boot loader to load kernel image.
@@ -75,12 +78,12 @@ func ParseRISCVFromBytes(data []byte) (*RISCVImage, error) {
 	//
 	// Unlike arm64 there is no older-kernel fallback to guess at here.
 	if img.Header.ImageSize == 0 {
-		return img, errNoImageSize
+		return img, ErrNoImageSize
 	}
 
 	// Bit 0 of flags is the kernel endianness, 1 if big endian.
 	if img.Header.Flags&0x1 != 0 {
-		return img, errBadEndianness
+		return img, ErrBadEndianness
 	}
 
 	img.Data = data
