@@ -14,12 +14,19 @@
 package main
 
 import (
+	"flag"
 	"log"
 
 	"golang.org/x/sys/unix"
 )
 
 func main() {
+	sync := flag.Bool("n", false, "The file system cache is not flushed.  This option should probably not be used.")
+	flag.Parse()
+	if !*sync {
+		unix.Sync()
+	}
+
 	if err := unix.Reboot(unix.LINUX_REBOOT_CMD_POWER_OFF); err != nil {
 		log.Fatal(err)
 	}
